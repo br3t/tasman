@@ -9,9 +9,9 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
-	<div class="container">
+	<div id="projects-wrapper" class="container">
 		<div class="page-header">
-		  <h1>Task manager</h1>
+			<h1>Task manager</h1>
 		</div>
 
 		<div class="panel panel-default">
@@ -19,18 +19,55 @@
 				<h3 class="panel-title">Project Name</h3>
 			</div>
 			<div class="panel-body">
-				<div class="row">
+				<ul class="list-group">
+					<li class="row list-group-item task done" data-id="1">
+						<div class="col-sm-10">
+							Task #1 
+						</div>
+						<div class="col-sm-2">
+							<span class="glyphicon glyphicon-pencil"></span>
+							<span class="glyphicon glyphicon-remove"></span>
+						</div>
+					</li>
+				
+					<li class="row list-group-item task undone" data-id="2">
+						<div class="col-sm-10">
+							Task #2 
+						</div>
+						<div class="col-sm-2">
+							<span class="glyphicon glyphicon-pencil"></span>
+							<span class="glyphicon glyphicon-remove"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- Template //-->
+	<script type="text/template" id="project-template">
+		<div class="panel panel-default project" data-id="<%= id %>">
+			<div class="panel-heading">
+				<h3 class="panel-title"><%= name %></h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+			<% for(var i = 0; i < tasks.length; i++) { %>
+				<li class="row list-group-item task <%= tasks[i].status == 1 ? 'done':'undone' %>" data-id="<%= tasks[i].id %>">
 					<div class="col-sm-10">
-						Task #1 
+						<%= tasks[i].name %> 
 					</div>
 					<div class="col-sm-2">
 						<span class="glyphicon glyphicon-pencil"></span>
 						<span class="glyphicon glyphicon-remove"></span>
 					</div>
-				</div>
+				</li>
+			<% } %>
+				</ul>
 			</div>
 		</div>
-	</div>
+	</script>
+	<!-- Template End //-->
+	<script type="text/javascript" src="js/lodash.min.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/script.js"></script>

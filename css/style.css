@@ -1,3 +1,17 @@
 body {
 	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQoU2OMq7zlw0AEYAQpXNSutoWQ2lGFeEOI6OABAGfyJgjVLYhIAAAAAElFTkSuQmCC");
 }
+h1 {
+	color: #283593;
+	text-align: center;
+}
+.panel .panel-heading {
+	background: #283593;
+    color: #FAFAFA;
+}
+.task.done {
+	background: #F1F8E9;
+}
+.task.undone {
+	background: #FFFDE7;
+}
