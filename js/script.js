@@ -24,4 +24,16 @@ tasman.getAll = function() {
 
 $(document).ready(function() {
 	tasman.getAll();
+
+	//* toggle tasks visibility
+	$('body').on('click', '.task-visibility:not(.active)', function() {
+		var panel = $(this).closest('.panel-body');
+		panel.find('.task-visibility').removeClass('active');
+		$(this).addClass('active');
+		if($(this).attr('data-tasks') == 'undone') {
+			panel.find('.done').hide();
+		} else {
+			panel.find('.done').show();
+		}
+	});
 });

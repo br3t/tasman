@@ -9,6 +9,19 @@ h1 {
 	background: #283593;
     color: #FAFAFA;
 }
+.projects-adv-tools {
+	padding: 10px 0;
+}
+.btn-tasman {
+    color: #fff;
+    background-color: #D32F2F;
+    border-color: #B71C1C;
+}
+.btn-tasman:hover {
+    color: #fff;
+    background-color: #C62828;
+    border-color: #B71C1C;
+}
 .task.done {
 	background: #F1F8E9;
 }

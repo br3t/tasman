@@ -16,17 +16,38 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title">Project Name</h3>
+				<h3 class="panel-title row">
+					<div class="col-sm-10">
+						Static project name 
+					</div>
+					<div class="col-sm-2 text-right">
+						<span class="glyphicon glyphicon-pencil" title="Edit project"></span>
+						<span class="glyphicon glyphicon-trash" title="Remove project"></span>
+					</div>
+				</h3>
 			</div>
 			<div class="panel-body">
+				<div class="row projects-adv-tools">
+					<div class="col-sm-6">
+						Display tasks:
+							<div class="btn-group">
+								<button type="button" class="btn btn-default active task-visibility" data-tasks="all">all</button>
+								<button type="button" class="btn btn-default task-visibility" data-tasks="undone">undone</button>
+							</div>
+					</div>
+					<div class="col-sm-6 text-right">
+						<button type="button" class="btn btn-tasman">Add task</button>
+					</div>
+				</div>
 				<ul class="list-group">
 					<li class="row list-group-item task done" data-id="1">
 						<div class="col-sm-10">
 							Task #1 
 						</div>
-						<div class="col-sm-2">
+						<div class="col-sm-2 text-right">
 							<span class="glyphicon glyphicon-pencil"></span>
-							<span class="glyphicon glyphicon-remove"></span>
+							<span class="glyphicon glyphicon-trash" title="Remove task"></span>
+							<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
 						</div>
 					</li>
 				
@@ -34,13 +55,19 @@
 						<div class="col-sm-10">
 							Task #2 
 						</div>
-						<div class="col-sm-2">
+						<div class="col-sm-2 text-right">
 							<span class="glyphicon glyphicon-pencil"></span>
-							<span class="glyphicon glyphicon-remove"></span>
+							<span class="glyphicon glyphicon-trash" title="Remove task"></span>
+							<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
 						</div>
 					</li>
 				</ul>
 			</div>
+		</div>
+	</div>
+	<div class="container text-center">
+		<div class="btn-group">
+  			<button type="button" class="btn btn-tasman">Add project</button>
 		</div>
 	</div>
 	<!-- Template //-->
@@ -58,7 +85,8 @@
 					</div>
 					<div class="col-sm-2">
 						<span class="glyphicon glyphicon-pencil"></span>
-						<span class="glyphicon glyphicon-remove"></span>
+						<span class="glyphicon glyphicon-trash" title="Remove task"></span>
+						<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
 					</div>
 				</li>
 			<% } %>
