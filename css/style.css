@@ -7,24 +7,47 @@ h1 {
 }
 .panel .panel-heading {
 	background: #283593;
-    color: #FAFAFA;
+	color: #FAFAFA;
 }
 .projects-adv-tools {
 	padding: 10px 0;
 }
 .btn-tasman {
-    color: #fff;
-    background-color: #D32F2F;
-    border-color: #B71C1C;
+	color: #fff;
+	background-color: #D32F2F;
+	border-color: #B71C1C;
 }
 .btn-tasman:hover {
-    color: #fff;
-    background-color: #C62828;
-    border-color: #B71C1C;
+	color: #fff;
+	background-color: #C62828;
+	border-color: #B71C1C;
 }
 .task.done {
 	background: #F1F8E9;
 }
 .task.undone {
 	background: #FFFDE7;
+}
+.layout {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,.5);
+	z-index: 10;
+}
+.modal-window {
+	background: #FFF;
+	width: 90%;
+	max-width: 500px;
+	position: relative;
+	margin: 100px auto 0;
+	padding: 20px;
+}
+.modal-close {
+	font-size: 14px;
+	position: absolute;
+	right: -10px;
+	top: -10px;
 }
