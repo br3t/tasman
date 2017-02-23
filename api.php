@@ -38,6 +38,30 @@
 		exit;
 	}
 
+	//--------------
+	//* get projects info
+	if(isset($_GET['action']) && $_GET['action'] == "create" && isset($_GET['entity']) && $_GET['entity'] == "project") {
+		$name = $_GET['name'];
+		if($name != "") {
+			$mysqli = connect();
+			$sql_newproject = "INSERT INTO projects SET name='".$mysqli->real_escape_string($name)."'";
+			$result_newproject = $mysqli->query($sql_newproject);
+			if($result_newproject) {
+				$json[$mysqli->insert_id] = array(
+					'id' => $mysqli->insert_id,
+					'name' => $name,
+					'tasks' => array()
+				);
+			} else {
+				$json['error'] = "Project wasn`t created";
+			}
+		} else {
+			$json['error'] = 'Please, give name for your new project';
+		}
+		print(json_encode($json));
+		exit;
+	}
+
 
 
 	//* DB connection
