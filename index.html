@@ -14,7 +14,7 @@
 			<h1>Task manager</h1>
 		</div>
 
-		<div class="panel panel-default">
+		<div class="panel panel-default project" data-id="0">
 			<div class="panel-heading">
 				<h3 class="panel-title row">
 					<div class="col-sm-10">
@@ -36,7 +36,7 @@
 							</div>
 					</div>
 					<div class="col-sm-6 text-right">
-						<button type="button" class="btn btn-tasman">Add task</button>
+						<button type="button" class="btn btn-tasman add-task" data-toggle="modal" data-target="#add-task">Add task</button>
 					</div>
 				</div>
 				<ul class="list-group">
@@ -67,19 +67,44 @@
 	</div>
 	<div class="container text-center">
 		<div class="btn-group">
-  			<button type="button" class="btn btn-tasman show-modal" data-modal="add-project">Add project</button>
+  			<button type="button" class="btn btn-tasman" data-toggle="modal" data-target="#add-project">Add project</button>
 		</div>
 	</div>
 	<!-- Modal wondows //-->
-	<div class="layout">
-		<div class="modal-window" data-modal="add-project">
-			<span class="glyphicon glyphicon-remove modal-close j-modal-close btn btn-tasman"></span>
-			<h3>Add new project</h3>
-			Project name: <input type="text" id="newProjectName" />
-			<div class="btn-group">
-				<button type="button" class="btn btn-tasman">Save</button>
-				<button type="button" class="btn btn-tasman j-modal-close">Cancel</button>
-			</div>
+	<div class="modal fade" id="add-project" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		          <h4 class="modal-title">Add new project</h4>
+		        </div>
+			    <div class="modal-body">
+					Project name: <input type="text" id="newProjectName" />
+					<div class="btn-group">
+						<button type="button" class="btn btn-tasman create-project">Save</button>
+						<button type="button" class="btn btn-tasman" data-dismiss="modal">Cancel</button>
+					</div>
+		        </div>
+	        </div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="add-task" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		          <h4 class="modal-title">Add new task</h4>
+		        </div>
+			    <div class="modal-body">
+					Task name: <input type="text" id="newTaskName" />
+					<input type="hidden" id="projectToAdd" />
+					<div class="btn-group">
+						<button type="button" class="btn btn-tasman create-task">Save</button>
+						<button type="button" class="btn btn-tasman" data-dismiss="modal">Cancel</button>
+					</div>
+		        </div>
+	        </div>
 		</div>
 	</div>
 	<!-- Template //-->
@@ -106,7 +131,7 @@
 								</div>
 						</div>
 						<div class="col-sm-6 text-right">
-							<button type="button" class="btn btn-tasman">Add task</button>
+							<button type="button" class="btn btn-tasman show-modal" data-modal="add-task">Add task</button>
 						</div>
 					</div>
 					<ul class="list-group">

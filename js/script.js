@@ -36,4 +36,10 @@ $(document).ready(function() {
 			panel.find('.done').show();
 		}
 	});
+
+	//* set project id for new task
+	$('body').on('click', '.add-task', function() {
+		var projectId = $(this).closest('.project').attr('data-id');
+		$('#projectToAdd').val(projectId);
+	});
 });
