@@ -28,3 +28,9 @@ h1 {
 .task.undone {
 	background: #FFFDE7;
 }
+.edit-project,
+.remove-project-init,
+.remove-task,
+.edit-task {
+	cursor: pointer;
+}

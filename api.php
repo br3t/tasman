@@ -39,7 +39,7 @@
 	}
 
 	//--------------
-	//* get projects info
+	//* add new project
 	if(isset($_GET['action']) && $_GET['action'] == "create" && isset($_GET['entity']) && $_GET['entity'] == "project") {
 		$name = $_GET['name'];
 		if($name != "") {
@@ -57,6 +57,26 @@
 			}
 		} else {
 			$json['error'] = 'Please, give name for your new project';
+		}
+		print(json_encode($json));
+		exit;
+	}
+
+	//--------------
+	//* remove project
+	if(isset($_GET['action']) && $_GET['action'] == "remove" && isset($_GET['entity']) && $_GET['entity'] == "project") {
+		$project_id = intval($_GET['project_id']);
+		if($project_id != "") {
+			$mysqli = connect();
+			$sql_rmproject = "DELETE FROM projects WHERE id='".$project_id."'";
+			$result_rmproject = $mysqli->query($sql_rmproject);
+			if($result_rmproject) {
+				$json['project_id'] = $project_id;
+			} else {
+				$json['error'] = "Project wasn`t removed";
+			}
+		} else {
+			$json['error'] = 'Please, set id of removing project';
 		}
 		print(json_encode($json));
 		exit;

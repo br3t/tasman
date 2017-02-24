@@ -93,4 +93,35 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	//* rm project init
+	$('body').on('click', '.remove-project-init', function() {
+		var project = $(this).closest('.project');
+		var projectId = project.attr('data-id');
+		var projectName = project.find('.project-name').text();
+		$('#remove-project .project-name').text(projectName);
+		$('#rmProjectId').val(projectId);
+	});
+
+	//* rm project
+	$('body').on('click', '.remove-project', function() {
+		$.ajax({
+			url: tasman.apiPath,
+			method: "GET",
+			dataType: "json",
+			data: {
+				action: "remove",
+				entity: "project",
+				project_id: $('#rmProjectId').val()
+			},
+			success: function(respond) {
+				if(respond.error) {
+					helpInfo.text(respond.error);
+				} else {
+					$('.project[data-id=' + respond.project_id + ']').remove();
+					$('#remove-project').modal('hide');
+				}
+			}
+		});
+	});
 });
