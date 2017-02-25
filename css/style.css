@@ -5,9 +5,17 @@ h1 {
 	color: #283593;
 	text-align: center;
 }
-.panel .panel-heading {
+.panel .panel-heading,
+.modal .modal-header {
 	background: #283593;
 	color: #FAFAFA;
+}
+button.close {
+	color: #FFF;
+	opacity: 1;
+}
+.help-info {
+	display: none;
 }
 .projects-adv-tools {
 	padding: 10px 0;

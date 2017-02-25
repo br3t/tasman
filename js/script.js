@@ -42,6 +42,10 @@ $(document).ready(function() {
 	//* load real projects
 	tasman.getAll();
 
+	$('[data-wrapper=newTaskDeadline]').datetimepicker({
+		format: "YYYY-MM-D"
+	});
+
 	//* toggle tasks visibility
 	$('body').on('click', '.task-visibility:not(.active)', function() {
 		var panel = $(this).closest('.panel-body');
@@ -55,16 +59,17 @@ $(document).ready(function() {
 	});
 
 	//* 
-	$('body').on('change input keydown', '#newProjectName', function() {
-		$(this).closest(".modal-body").find(".help-info").text("");
+	$('body').on('change input keydown', '#newProjectName,#newTaskName', function() {
+		$(this).closest(".modal-body").find(".help-info").hide().text("");
 	});
 	//* save new project
 	$('body').on('click', '.create-project', function() {
 		var newProjectNameInput = $("#newProjectName");
 		var newProjectName = newProjectNameInput.val();
-		var helpInfo = $("#newProjectName").closest(".modal-body").find(".help-info");
+		var helpInfo = newProjectNameInput.closest(".modal-body").find(".help-info");
 		if(newProjectName.length <3) {
-			helpInfo.text("Project title should be at least 3 symbols length");
+			helpInfo.show().text("Project name should be at least 3 symbols length");
+			newProjectNameInput.focus();
 		} else {
 			$.ajax({
 				url: tasman.apiPath,
@@ -121,8 +126,37 @@ $(document).ready(function() {
 
 	//* add task init
 	$('body').on('click', '.add-task-init', function() {
+		$('#add-task .help-info').hide().text("");
+		$('#add-task-form').trigger("reset");
+
 		var projectId = $(this).closest('.project').attr('data-id');
 		$('#projectToAdd').val(projectId);
+
+	});
+
+	//* add task
+	$('body').on('click', '.create-task', function() {
+		var newTaskNameInput = $("#newTaskName");
+		var newTaskName = newTaskNameInput.val();
+		var helpInfo = newTaskNameInput.closest(".modal-body").find(".help-info");
+		if(newTaskName.length <3) {
+			helpInfo.show().text("Task name should be at least 3 symbols length");
+			newTaskNameInput.focus();
+		} else {
+			$.ajax({
+				url: tasman.apiPath,
+				method: "GET",
+				dataType: "json",
+				data: {
+					action: "create",
+					entity: "task",
+					project_id: $('#projectToAddId').val()
+				},
+				success: function(respond) {
+				}
+
+			});
+		}
 	});
 
 });

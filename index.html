@@ -69,23 +69,32 @@
 				  <h4 class="modal-title">Add new task</h4>
 				</div>
 				<div class="modal-body">
-					<div class="form-group">
-						<label for="newTaskName">Task name:</label>
-						<input type="text" class="form-control" id="newTaskName" placeholder="Task Name">
-					</div>
-					<div class="form-group">
-						<label for="newTaskPriority">Task priority:</label>
-						<input type="number" class="form-control" id="newTaskPriority" placeholder="1" value="1">
-					</div>
-					<div class="form-group">
-						<label for="newTaskDeadline">Task deadline (optional):</label>
-						<input type="text" class="form-control" id="newTaskDeadline" placeholder="">
-					</div>
-					<input type="hidden" id="projectToAdd" />
-					<div class="btn-group">
-						<button type="button" class="btn btn-tasman create-task">Save</button>
-						<button type="button" class="btn btn-tasman" data-dismiss="modal">Cancel</button>
-					</div>
+					<div class="help-info alert alert-danger" role="alert"></div>
+					<form id="add-task-form">
+						<div class="form-group">
+							<label for="newTaskName">Task name:</label>
+							<input type="text" class="form-control" id="newTaskName" placeholder="Task Name">
+						</div>
+						<div class="form-group">
+							<label for="newTaskPriority">Task priority:</label>
+							<input type="number" class="form-control" id="newTaskPriority" placeholder="1" value="1">
+						</div>
+						<div class="form-group">
+							<label for="newTaskDeadline">Task deadline (optional):</label>
+							<div class="input-group" data-wrapper="newTaskDeadline">
+								<input type="text" class="form-control" id="newTaskDeadline" placeholder="1970-01-1">
+			                    <span class="input-group-addon">
+			                        <span class="glyphicon glyphicon-calendar"></span>
+			                    </span>
+							</div>
+						</div>
+						<input type="hidden" id="projectToAdd" />
+						<div class="btn-group">
+							<button type="button" class="btn btn-tasman create-task">Save</button>
+							<button type="button" class="btn btn-tasman" data-dismiss="modal">Cancel</button>
+						</div>
+						
+					</form>
 				</div>
 			</div>
 		</div>
@@ -139,9 +148,13 @@
 		</div>
 	</script>
 	<!-- Template End //-->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-datetimepicker.min.css" />
+
 	<script type="text/javascript" src="js/lodash.min.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/moment.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
 	<script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>
