@@ -54,12 +54,6 @@ $(document).ready(function() {
 		}
 	});
 
-	//* set project id for new task
-	$('body').on('click', '.add-task', function() {
-		var projectId = $(this).closest('.project').attr('data-id');
-		$('#projectToAdd').val(projectId);
-	});
-
 	//* 
 	$('body').on('change input keydown', '#newProjectName', function() {
 		$(this).closest(".modal-body").find(".help-info").text("");
@@ -124,4 +118,11 @@ $(document).ready(function() {
 			}
 		});
 	});
+
+	//* add task init
+	$('body').on('click', '.add-task-init', function() {
+		var projectId = $(this).closest('.project').attr('data-id');
+		$('#projectToAdd').val(projectId);
+	});
+
 });

@@ -69,7 +69,18 @@
 				  <h4 class="modal-title">Add new task</h4>
 				</div>
 				<div class="modal-body">
-					Task name: <input type="text" id="newTaskName" />
+					<div class="form-group">
+						<label for="newTaskName">Task name:</label>
+						<input type="text" class="form-control" id="newTaskName" placeholder="Task Name">
+					</div>
+					<div class="form-group">
+						<label for="newTaskPriority">Task priority:</label>
+						<input type="number" class="form-control" id="newTaskPriority" placeholder="1" value="1">
+					</div>
+					<div class="form-group">
+						<label for="newTaskDeadline">Task deadline (optional):</label>
+						<input type="text" class="form-control" id="newTaskDeadline" placeholder="">
+					</div>
 					<input type="hidden" id="projectToAdd" />
 					<div class="btn-group">
 						<button type="button" class="btn btn-tasman create-task">Save</button>
@@ -104,7 +115,7 @@
 								</div>
 						</div>
 						<div class="col-sm-6 text-right">
-							<button type="button" class="btn btn-tasman show-modal" data-modal="add-task">Add task</button>
+							<button type="button" class="btn btn-tasman add-task-init" data-toggle="modal" data-target="#add-task" title="Add task">Add task</button>
 						</div>
 					</div>
 					<ul class="list-group">
