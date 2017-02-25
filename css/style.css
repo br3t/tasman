@@ -36,9 +36,13 @@ button.close {
 .task.undone {
 	background: #FFFDE7;
 }
+.show-undone-only .done {
+	display: none;
+}
 .edit-project,
 .remove-project-init,
-.remove-task,
-.edit-task {
+.remove-task-init,
+.edit-task,
+.status-icon {
 	cursor: pointer;
 }

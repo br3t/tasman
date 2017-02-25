@@ -24,26 +24,33 @@ tasman.renderProjects = function(projectList) {
 		$("#projects-wrapper").append(projectHtml);
 	}
 };
+tasman.renderTask = function(task) {
+	var compiledTpl = _.template($("#task-template").text());
+	return compiledTpl(task);
+};
 
 
 $(document).ready(function() {
 	//* static project for demo
-	tasman.renderProjects({
-		0: {
-			id: 0,
-			name: 'Static DEMO project',
-			tasks: [
-				{id: -1, name: 'Task -1', status: true },
-				{id: -2, name: 'Task -2', status: false }
-			]
-		}
-	});
+	if(location.hash == '#demo') {
+		tasman.renderProjects({
+			0: {
+				id: 0,
+				name: 'Static DEMO project',
+				tasks: [
+					{id: -1, name: 'Task -1', status: true, priority: 10 },
+					{id: -2, name: 'Task -2', status: false, priority: 1, deadline: '2017-03-01' }
+				]
+			}
+		});
+	}
+	
 
 	//* load real projects
 	tasman.getAll();
 
 	$('[data-wrapper=newTaskDeadline]').datetimepicker({
-		format: "YYYY-MM-D"
+		format: "YYYY-MM-DD"
 	});
 
 	//* toggle tasks visibility
@@ -52,9 +59,9 @@ $(document).ready(function() {
 		panel.find('.task-visibility').removeClass('active');
 		$(this).addClass('active');
 		if($(this).attr('data-tasks') == 'undone') {
-			panel.find('.done').hide();
+			panel.addClass('show-undone-only');
 		} else {
-			panel.find('.done').show();
+			panel.removeClass('show-undone-only');
 		}
 	});
 
@@ -130,8 +137,7 @@ $(document).ready(function() {
 		$('#add-task-form').trigger("reset");
 
 		var projectId = $(this).closest('.project').attr('data-id');
-		$('#projectToAdd').val(projectId);
-
+		$('#projectToAddId').val(projectId);
 	});
 
 	//* add task
@@ -150,13 +156,83 @@ $(document).ready(function() {
 				data: {
 					action: "create",
 					entity: "task",
-					project_id: $('#projectToAddId').val()
+					name: newTaskName,
+					project_id: $('#projectToAddId').val(),
+					deadline: $('#newTaskDeadline').val() || 0
 				},
 				success: function(respond) {
+					if(respond.error) {
+						helpInfo.show().text(respond.error);
+					} else {
+						var renderedTask = tasman.renderTask(respond);
+						$('.project[data-id=' + respond.project_id + '] .list-group').append(renderedTask);
+						$('#add-task').modal('hide');
+					}
 				}
-
 			});
 		}
+	});
+
+	//* rm task init
+	$('body').on('click', '.remove-task-init', function() {
+		var task = $(this).closest('.task');
+		var taskId = task.attr('data-id');
+		var taskName = task.find('.task-name').text();
+		$('#remove-task .task-name').text(taskName);
+		$('#rmTaskId').val(taskId);
+	});
+
+	//* rm task
+	$('body').on('click', '.remove-task', function() {
+		$.ajax({
+			url: tasman.apiPath,
+			method: "GET",
+			dataType: "json",
+			data: {
+				action: "remove",
+				entity: "task",
+				id: $('#rmTaskId').val()
+			},
+			success: function(respond) {
+				if(respond.error) {
+					helpInfo.text(respond.error);
+				} else {
+					$('.task[data-id=' + respond.id + ']').remove();
+					$('#remove-task').modal('hide');
+				}
+			}
+		});
+	});
+
+	//* toggle task
+	$('body').on('click', '.status-icon', function() {
+		var taskId = $(this).closest('.task').attr('data-id');
+		var taskStatus = parseInt($(this).attr('data-status'));
+		$.ajax({
+			url: tasman.apiPath,
+			method: "GET",
+			dataType: "json",
+			data: {
+				action: "set_status",
+				entity: "task",
+				id: taskId,
+				status: taskStatus === 0 ? 1 : 0
+			},
+			success: function(respond) {
+				if(respond.error) {
+					//helpInfo.text(respond.error);
+				} else {
+					var taskRow = $('.task[data-id=' + respond.id + ']');
+					if(respond.status == 1) {
+						taskRow.removeClass('undone').addClass('done');
+						taskRow.find('.status-icon').removeClass('glyphicon-remove').addClass('glyphicon-ok').attr('data-status', 1);
+					} else {
+						taskRow.addClass('undone').removeClass('done');
+						taskRow.find('.status-icon').addClass('glyphicon-remove').removeClass('glyphicon-ok').attr('data-status', 0);
+					}
+				}
+			}
+		});
 	});
 
 });

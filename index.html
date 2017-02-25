@@ -22,7 +22,7 @@
 	</div>
 
 	<!-- Modal windows //-->
-	<div class="modal fade" id="add-project" role="dialog">
+	<div id="add-project" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -41,12 +41,12 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="remove-project" role="dialog">
+	<div id="remove-project" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-				  <button type="button" class="close" data-dismiss="modal">&times;</button>
-				  <h4 class="modal-title">Removing project</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Removing project</h4>
 				</div>
 				<div class="modal-body">
 					<div>You are going to remove project "<b class="project-name"></b>". Are you sure?</div>
@@ -61,7 +61,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="add-task" role="dialog">
+	<div id="add-task" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -76,25 +76,41 @@
 							<input type="text" class="form-control" id="newTaskName" placeholder="Task Name">
 						</div>
 						<div class="form-group">
-							<label for="newTaskPriority">Task priority:</label>
-							<input type="number" class="form-control" id="newTaskPriority" placeholder="1" value="1">
-						</div>
-						<div class="form-group">
 							<label for="newTaskDeadline">Task deadline (optional):</label>
 							<div class="input-group" data-wrapper="newTaskDeadline">
-								<input type="text" class="form-control" id="newTaskDeadline" placeholder="1970-01-1">
+								<input type="text" class="form-control" id="newTaskDeadline" placeholder="1970-12-31">
 			                    <span class="input-group-addon">
 			                        <span class="glyphicon glyphicon-calendar"></span>
 			                    </span>
 							</div>
 						</div>
-						<input type="hidden" id="projectToAdd" />
+						<input type="hidden" id="projectToAddId" />
 						<div class="btn-group">
 							<button type="button" class="btn btn-tasman create-task">Save</button>
 							<button type="button" class="btn btn-tasman" data-dismiss="modal">Cancel</button>
 						</div>
 						
 					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="remove-task" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Removing task</h4>
+				</div>
+				<div class="modal-body">
+					<div>You are going to remove task "<b class="task-name"></b>". Are you sure?</div>
+					<div class="help-info"></div>
+					<input type="hidden" id="rmTaskId" />
+					<div class="btn-group">
+						<button type="button" class="btn btn-tasman remove-task">Yes, remove it</button>
+						<button type="button" class="btn btn-tasman" data-dismiss="modal">No, cancel removing</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -131,21 +147,37 @@
 					<% for(var i = 0; i < tasks.length; i++) { %>
 						<li class="row list-group-item task <%= tasks[i].status == 1 ? 'done':'undone' %>" data-id="<%= tasks[i].id %>">
 							<div class="col-sm-10">
-								<span class="glyphicon glyphicon-<%= tasks[i].status == 1 ? 'ok':'remove' %>"></span>
-								<%= tasks[i].name %> 
+								<span class="glyphicon glyphicon-<%= tasks[i].status == 1 ? 'ok':'remove' %> status-icon" data-status="<%= tasks[i].status %>"></span>
+								<span class="task-name"><%= tasks[i].name %></span>
+								<% if(tasks[i].deadline !='0000-00-00') { %><span class="label label-default deadline" title="Deadline"><%= tasks[i].deadline %></span><% } %>
 							</div>
 							<div class="col-sm-2 text-right">
 								<span class="glyphicon glyphicon-pencil edit-task" title="Edit task"></span>
-								<span class="glyphicon glyphicon-trash remove-task" title="Remove task"></span>
+								<span class="glyphicon glyphicon-trash remove-task-init" title="Remove task" data-toggle="modal" data-target="#remove-task"></span>
 								<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
 							</div>
 						</li>
 					<% } %>
-					
 					</ul>
 				</div>
 			</div>
 		</div>
+	</script>
+
+	<!-- TODO: rm duplicated  tpl-code  //-->
+	<script type="text/template" id="task-template"> 
+		<li class="row list-group-item task <%= status == 1 ? 'done':'undone' %>" data-id="<%= id %>">
+			<div class="col-sm-10">
+				<span class="glyphicon glyphicon-<%= status == 1 ? 'ok':'remove' %> status-icon" data-status="<% status %>"></span>
+				<span class="task-name"><%= name %></span>
+				<% if(deadline !='0000-00-00') { %><span class="label label-default deadline" title="Deadline"><%= deadline %></span><% } %>
+			</div>
+			<div class="col-sm-2 text-right">
+				<span class="glyphicon glyphicon-pencil edit-task" title="Edit task"></span>
+				<span class="glyphicon glyphicon-trash remove-task-init" title="Remove task" data-toggle="modal" data-target="#remove-task"></span>
+				<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
+			</div>
+		</li>
 	</script>
 	<!-- Template End //-->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-datetimepicker.min.css" />
