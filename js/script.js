@@ -13,6 +13,17 @@ tasman.getAll = function() {
 		},
 		success: function(respond) {
 			tasman.renderProjects(respond);
+			$('.task-group').sortable({
+				handle: '.change-task-priority',
+				placeholder: 'row list-group-item task-placeholder',
+				update: function( event, ui ) {
+					var taskIds = [];
+					ui.item.closest('.task-group').find('.task').each(function() { 
+						taskIds.push($(this).attr('data-id'));
+					});
+					tasman.reorderTasks(taskIds);
+				}
+			});
 		}
 	});
 };
@@ -27,6 +38,21 @@ tasman.renderProjects = function(projectList) {
 tasman.renderTask = function(task) {
 	var compiledTpl = _.template($("#task-template").text());
 	return compiledTpl(task);
+};
+tasman.reorderTasks = function(taskIds) {
+	console.log(taskIds);
+	$.ajax({
+		url: tasman.apiPath,
+		method: "GET",
+		dataType: "json",
+		data: {
+			action: "reorder",
+			entity: "task",
+			taskByPriority: taskIds.join(',')
+		},
+		success: function(respond) {
+		}
+	});
 };
 
 
@@ -48,6 +74,7 @@ $(document).ready(function() {
 
 	//* load real projects
 	tasman.getAll();
+
 
 	$('[data-wrapper=newTaskDeadline]').datetimepicker({
 		format: "YYYY-MM-DD"

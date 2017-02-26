@@ -148,10 +148,37 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 				$json['id'] = $id;
 				$json['status'] = $status;
 			} else {
-				$json['error'] = "Task status wasn`t changes";
+				$json['error'] = "Task status wasn`t changed";
 			}
 		} else {
 			$json['error'] = 'Please, set task id for changing status';
+		}
+		print(json_encode($json));
+		exit;
+	}
+	//--------------
+	//* change task status
+	if($_GET['action'] == "reorder" && $_GET['entity'] == "task") {
+		$taskByPriority = explode(',', $_GET['taskByPriority']);
+		$tasksLength = count($taskByPriority);
+		if($tasksLength > 1) {
+			$mysqli = connect();
+			$sql_prioritytask = "";
+			for($i = 0; $i < $tasksLength; $i++) {
+				$taskByPriority[$i] = intval($taskByPriority[$i]);
+				if($taskByPriority[$i] != 0) {
+					$sql_prioritytask .= 'UPDATE tasks SET priority='.($tasksLength-$i).' WHERE id='.$taskByPriority[$i].';';
+				}
+				
+			}
+			$result_prioritytask = $mysqli->multi_query($sql_prioritytask);
+			if($result_prioritytask) {
+				$json = 'ok';
+			} else {
+				$json['error'] = 'Tasks weren`t reordered';
+			}
+		} else {
+			$json['error'] = 'Please, set tasks for reorder';
 		}
 		print(json_encode($json));
 		exit;

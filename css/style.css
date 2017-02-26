@@ -10,6 +10,9 @@ h1 {
 	background: #283593;
 	color: #FAFAFA;
 }
+.panel-body {
+    padding: 15px 25px;
+}
 button.close {
 	color: #FFF;
 	opacity: 1;
@@ -45,4 +48,13 @@ button.close {
 .edit-task,
 .status-icon {
 	cursor: pointer;
+}
+.change-task-priority {
+	cursor: move;
+}
+.task-placeholder {
+	margin: 5px -10px;
+	border-style: dashed;
+	padding: 15px;
+	background: #f5f5f5;
 }

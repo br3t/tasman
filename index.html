@@ -143,18 +143,18 @@
 							<button type="button" class="btn btn-tasman add-task-init" data-toggle="modal" data-target="#add-task" title="Add task">Add task</button>
 						</div>
 					</div>
-					<ul class="list-group">
+					<ul class="list-group task-group">
 					<% for(var i = 0; i < tasks.length; i++) { %>
-						<li class="row list-group-item task <%= tasks[i].status == 1 ? 'done':'undone' %>" data-id="<%= tasks[i].id %>">
+						<li class="row list-group-item ui-state-default task <%= tasks[i].status == 1 ? 'done':'undone' %>" data-id="<%= tasks[i].id %>">
 							<div class="col-sm-10">
-								<span class="glyphicon glyphicon-<%= tasks[i].status == 1 ? 'ok':'remove' %> status-icon" data-status="<%= tasks[i].status %>"></span>
+								<span class="glyphicon glyphicon-<%= tasks[i].status == 1 ? 'ok':'remove' %> status-icon" data-status="<%= tasks[i].status %>" title="Toggle status"></span>
 								<span class="task-name"><%= tasks[i].name %></span>
 								<% if(tasks[i].deadline !='0000-00-00') { %><span class="label label-default deadline" title="Deadline"><%= tasks[i].deadline %></span><% } %>
 							</div>
 							<div class="col-sm-2 text-right">
 								<span class="glyphicon glyphicon-pencil edit-task" title="Edit task"></span>
 								<span class="glyphicon glyphicon-trash remove-task-init" title="Remove task" data-toggle="modal" data-target="#remove-task"></span>
-								<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
+								<span class="glyphicon glyphicon-resize-vertical change-task-priority" title="Drag to change priority"></span>
 							</div>
 						</li>
 					<% } %>
@@ -166,24 +166,26 @@
 
 	<!-- TODO: rm duplicated  tpl-code  //-->
 	<script type="text/template" id="task-template"> 
-		<li class="row list-group-item task <%= status == 1 ? 'done':'undone' %>" data-id="<%= id %>">
+		<li class="row list-group-item ui-state-default task <%= status == 1 ? 'done':'undone' %>" data-id="<%= id %>">
 			<div class="col-sm-10">
-				<span class="glyphicon glyphicon-<%= status == 1 ? 'ok':'remove' %> status-icon" data-status="<% status %>"></span>
+				<span class="glyphicon glyphicon-<%= status == 1 ? 'ok':'remove' %> status-icon" data-status="<% status %>" title="Toggle status"></span>
 				<span class="task-name"><%= name %></span>
 				<% if(deadline !='0000-00-00') { %><span class="label label-default deadline" title="Deadline"><%= deadline %></span><% } %>
 			</div>
 			<div class="col-sm-2 text-right">
 				<span class="glyphicon glyphicon-pencil edit-task" title="Edit task"></span>
 				<span class="glyphicon glyphicon-trash remove-task-init" title="Remove task" data-toggle="modal" data-target="#remove-task"></span>
-				<span class="glyphicon glyphicon-resize-vertical" title="Drag to change priority"></span>
+				<span class="glyphicon glyphicon-resize-vertical change-task-priority" title="Drag to change priority"></span>
 			</div>
 		</li>
 	</script>
 	<!-- Template End //-->
+
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-datetimepicker.min.css" />
 
 	<script type="text/javascript" src="js/lodash.min.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.ui.sortable.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-datetimepicker.min.js"></script>
