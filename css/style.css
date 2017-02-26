@@ -8,6 +8,7 @@ h1 {
 .panel .panel-heading,
 .modal .modal-header {
 	background: #283593;
+	border-radius: 5px 5px 0 0;
 	color: #FAFAFA;
 }
 .panel-body {
@@ -42,7 +43,7 @@ button.close {
 .show-undone-only .done {
 	display: none;
 }
-.edit-project,
+.edit-project-init,
 .remove-project-init,
 .remove-task-init,
 .edit-task,
@@ -57,4 +58,14 @@ button.close {
 	border-style: dashed;
 	padding: 15px;
 	background: #f5f5f5;
+}
+.tasman-alert {
+	display: none;
+	border-color: #f18092;
+	position: fixed;
+	bottom: 5px;
+	left: 5px;
+	z-index: 1050;
+	max-width: 300px;
+	width: 90%;
 }

@@ -67,6 +67,32 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 	}
 
 	//--------------
+	//* edit project
+	if($_GET['action'] == "edit" && $_GET['entity'] == "project") {
+		$name = trim(htmlspecialchars($_GET['name']));
+		$project_id = intval($_GET['project_id']);
+		if($name != "") {
+			if($project_id != 0) {
+				$mysqli = connect();
+				$sql_editproject = "UPDATE projects SET name='".$mysqli->real_escape_string($name)."' WHERE id=".$project_id;
+				$result_editproject = $mysqli->query($sql_editproject);
+				if($result_editproject) {
+					$json['project_id'] = $project_id;
+					$json['name'] = $name;
+				} else {
+					$json['error'] = "Project wasn`t edited";
+				}
+			} else {
+				$json['error'] = 'Please, provide id for project to edit';
+			}
+		} else {
+			$json['error'] = 'Please, give new name for your project';
+		}
+		print(json_encode($json));
+		exit;
+	}
+
+	//--------------
 	//* remove project
 	if($_GET['action'] == "remove" && $_GET['entity'] == "project") {
 		$project_id = intval($_GET['project_id']);
