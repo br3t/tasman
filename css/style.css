@@ -18,8 +18,9 @@ button.close {
 	color: #FFF;
 	opacity: 1;
 }
-.help-info {
-	display: none;
+.close:focus,
+.close:hover {
+    color: #fff;
 }
 .projects-adv-tools {
 	padding: 10px 0;
@@ -46,7 +47,7 @@ button.close {
 .edit-project-init,
 .remove-project-init,
 .remove-task-init,
-.edit-task,
+.edit-task-init,
 .status-icon {
 	cursor: pointer;
 }

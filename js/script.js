@@ -50,7 +50,6 @@ tasman.hideAlert = function() {
 };
 
 tasman.reorderTasks = function(taskIds) {
-	console.log(taskIds);
 	$.ajax({
 		url: tasman.apiPath,
 		method: "GET",
@@ -87,7 +86,7 @@ $(document).ready(function() {
 	//* load real projects
 	tasman.getAll();
 
-	$('[data-wrapper=newTaskDeadline]').datetimepicker({
+	$('[data-wrapper=newTaskDeadline], [data-wrapper=taskNewDeadline]').datetimepicker({
 		format: "YYYY-MM-DD"
 	});
 
@@ -263,6 +262,60 @@ $(document).ready(function() {
 		}
 	});
 
+	//* edit task init
+	$('body').on('click', '.edit-task-init', function() {
+		$('#edit-task-form').trigger("reset");
+		var task = $(this).closest('.task');
+		var taskId = task.attr('data-id');
+		var taskName = task.find('.task-name').text();
+		var taskDeadline = task.find('.deadline').text();
+		$('#taskToEditId').val(taskId);
+		$('#taskNewName').val(taskName);
+		$('#taskNewDeadline').val(taskDeadline);
+	});
+	//* edit task
+	$('body').on('click', '.edit-task', function() {
+		var taskNewNameInput = $("#taskNewName");
+		var taskNewName = taskNewNameInput.val();
+		if(taskNewName.length <3) {
+			tasman.showAlert("Task new name should be at least 3 symbols length");
+			taskNewNameInput.focus();
+		} else {
+			tasman.hideAlert();
+			$.ajax({
+				url: tasman.apiPath,
+				method: "GET",
+				dataType: "json",
+				data: {
+					action: "edit",
+					entity: "task",
+					name: taskNewName,
+					id: $('#taskToEditId').val(),
+					deadline: $('#taskNewDeadline').val() || 0
+				},
+				success: function(respond) {
+					if(respond.error) {
+						tasman.showAlert(respond.error);
+					} else {
+						var task = $('.task[data-id=' + respond.id + ']');
+						task.find('.task-name').text(respond.name);
+						if(respond.deadline == '0000-00-00') {
+							task.find('.deadline').remove();
+						} else {
+							if(task.find('.deadline').length === 0) {
+								task.find('.task-name').after(' <span class="label label-default deadline" title="Deadline">' + respond.deadline + '</span>');
+							} else {
+								task.find('.deadline').text(respond.deadline);
+							}
+						}
+						$('#edit-task').modal('hide');
+						tasman.hideAlert();
+					}
+				}
+			});
+		}
+	});
+
 	//* rm task init
 	$('body').on('click', '.remove-task-init', function() {
 		var task = $(this).closest('.task');
@@ -307,7 +360,7 @@ $(document).ready(function() {
 				action: "set_status",
 				entity: "task",
 				id: taskId,
-				status: taskStatus === 0 ? 1 : 0
+				status: taskStatus === 1 ? 0 : 1
 			},
 			success: function(respond) {
 				if(respond.error) {

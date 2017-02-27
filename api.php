@@ -131,6 +131,7 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 				$json = array(
 					'id' => $mysqli->insert_id,
 					'name' => $name,
+					'status' => 0,
 					'deadline' => $deadline,
 					'project_id' => $project_id
 				);
@@ -139,6 +140,36 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 			}
 		} else {
 			$json['error'] = 'Please, give name for your new tak';
+		}
+		print(json_encode($json));
+		exit;
+	}
+
+	//--------------
+	//* edit task
+	if($_GET['action'] == "edit" && $_GET['entity'] == "task") {
+		$name = htmlspecialchars($_GET['name']);
+		$id = intval($_GET['id']);
+		$deadline = $_GET['deadline'];
+		if(preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $deadline) != 1) {
+			$deadline = '0000-00-00';
+		}
+
+		if($name != "") {
+			$mysqli = connect();
+			$sql_edittask = "UPDATE tasks SET name='".$mysqli->real_escape_string($name)."', deadline='".$deadline."' WHERE id=".$id;
+			$result_edittask = $mysqli->query($sql_edittask);
+			if($result_edittask) {
+				$json = array(
+					'id' => $id,
+					'name' => $name,
+					'deadline' => $deadline
+				);
+			} else {
+				$json['error'] = "Task wasn`t edited: ".$mysqli->error;
+			}
+		} else {
+			$json['error'] = 'Please, give new name for your tak';
 		}
 		print(json_encode($json));
 		exit;
