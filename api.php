@@ -134,7 +134,7 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 					'project_id' => $project_id
 				);
 			} else {
-				$json['error'] = "Task wasn`t created";
+				$json['error'] = "Task wasn`t created: ".$mysqli->error;
 			}
 		} else {
 			$json['error'] = 'Please, give name for your new tak';

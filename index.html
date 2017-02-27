@@ -9,17 +9,26 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
-	<div id="projects-wrapper" class="container">
+	<header id="projects-wrapper" class="container">
 		<div class="page-header">
 			<h1>Task manager</h1>
 		</div>
-	</div>
+	</header>
 
-	<div class="container text-center">
-		<div class="btn-group">
-			<button type="button" class="btn btn-tasman" data-toggle="modal" data-target="#add-project">Add project</button>
+	<main class="container">
+		<div id="projects-wrapper">
 		</div>
-	</div>
+
+		<div class="container text-center">
+			<div class="btn-group">
+				<button type="button" class="btn btn-tasman" data-toggle="modal" data-target="#add-project">Add project</button>
+			</div>
+		</div>
+	</main>
+
+	<footer class="container">
+		&copy 2017, <a href="http://br3t.org.ua" target="_blank">br3t</a>
+	</footer>
 
 	<!-- Modal windows //-->
 	<div id="add-project" class="modal fade" role="dialog">
