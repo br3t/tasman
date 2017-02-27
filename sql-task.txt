@@ -1,0 +1,17 @@
+SQL task
+
+1) Get all statuses, not repeating, alphabetically ordered
+
+2) Get the count of all tasks in each project, order by task count descending
+
+3) Get the count of all tasks in each project, order by project names
+
+4) Get the tasks of all projects having the name beginning with "N" letter
+
+5) Get the list of all projects containing the "a" letter in the middle of the name, and show the task count near each project. Mention tha there can exist projects without tasks and tasks with project_id=NULL
+
+6) Get the list of tasks with duplicate names. Order alphabetically
+
+7) Get the list of tasks having several exact matches of both name and status, from the project "Garage". Order by matches count
+
+8) Get the list of project names having more than 10 tasks in status "completed". Order by project_id
