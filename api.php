@@ -98,8 +98,9 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		$project_id = intval($_GET['project_id']);
 		if($project_id != "") {
 			$mysqli = connect();
-			$sql_rmproject = "DELETE FROM projects WHERE id='".$project_id."'";
-			$result_rmproject = $mysqli->query($sql_rmproject);
+			$sql_rmproject = "DELETE FROM projects WHERE id=".$project_id.";";
+			$sql_rmproject .= "DELETE FROM tasks WHERE project_id=".$project_id.";";
+			$result_rmproject = $mysqli->multi_query($sql_rmproject);
 			if($result_rmproject) {
 				$json['project_id'] = $project_id;
 			} else {
