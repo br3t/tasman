@@ -1,17 +1,45 @@
 SQL task
 
 1) Get all statuses, not repeating, alphabetically ordered
+> SELECT status FROM tasks 
+GROUP BY status 
+ORDER BY status ASC
 
 2) Get the count of all tasks in each project, order by task count descending
+> SELECT COUNT(*) FROM tasks 
+GROUP BY project_id 
+ORDER BY COUNT(*) DESC
 
 3) Get the count of all tasks in each project, order by project names
+> SELECT COUNT(*) FROM tasks, projects
+WHERE tasks.project_id=projects.id
+GROUP BY project_id 
+ORDER BY projects.name ASC
 
 4) Get the tasks of all projects having the name beginning with "N" letter
+> SELECT * FROM tasks
+WHERE tasks.name LIKE "N%"
 
 5) Get the list of all projects containing the "a" letter in the middle of the name, and show the task count near each project. Mention tha there can exist projects without tasks and tasks with project_id=NULL
+> SELECT COUNT(*) FROM tasks
+WHERE project_id IN 
+ (SELECT id FROM projects
+ WHERE name LIKE "%a%")
+GROUP BY project_id
 
 6) Get the list of tasks with duplicate names. Order alphabetically
+> SELECT name FROM tasks
+GROUP BY name
+HAVING count(*) > 1
+ORDER BY name ASC
 
 7) Get the list of tasks having several exact matches of both name and status, from the project "Garage". Order by matches count
 
 8) Get the list of project names having more than 10 tasks in status "completed". Order by project_id
+> SELECT name FROM 
+ (SELECT projects.name, projects.id, COUNT(*) as c FROM tasks, projects
+ WHERE tasks.project_id=projects.id AND status=1
+ GROUP BY project_id 
+ ORDER BY projects.name ASC) 
+WHERE c > 1
+ORDER BY id
