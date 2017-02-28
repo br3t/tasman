@@ -34,6 +34,11 @@ HAVING count(*) > 1
 ORDER BY name ASC
 
 7) Get the list of tasks having several exact matches of both name and status, from the project "Garage". Order by matches count
+> SELECT t.name FROM
+ (SELECT name, count(*) as c, project_id FROM tasks
+ GROUP BY name, status
+ HAVING c > 1) as t, projects
+WHERE projects.name = "Garage" AND projects.id = t.project_id
 
 8) Get the list of project names having more than 10 tasks in status "completed". Order by project_id
 > SELECT name FROM 
