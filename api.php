@@ -10,34 +10,35 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 	//--------------
 	//* get projects info
 	if($_GET['action'] == "get" && $_GET['entity'] == "project") {
-		$mysqli = connect();
+		$pdo = connect();
 		//* get project
-		$sql = "SELECT `id`, `name` FROM `projects`";
-		$result = $mysqli->query($sql);
-		if($result->num_rows > 0) {
-			while($row = $result->fetch_assoc()) {
-				$json[$row['id']] = array(
-					'id' => $row['id'],
-					'name' => $row['name'],
-					'tasks' => array()
-				);
-			}
+		$pdo_projects_query = $pdo->query('
+			SELECT projects.id, 
+				projects.name AS pname,
+				users.name AS uname
+			FROM `projects`, `users`
+			WHERE users.id = projects.owner_id');
+		while ($row_projects = $pdo_projects_query->fetch()) {
+			$json[$row_projects['id']] = array(
+				'id' => $row_projects['id'],
+				'name' => $row_projects['pname'],
+				'owner' => $row_projects['uname'],
+				'tasks' => array()
+			);
 		}
-		//* get tasks
-		$sql_tasks = "SELECT * FROM tasks ORDER BY `priority` DESC";
-		$result_tasks = $mysqli->query($sql_tasks);
-		if($result_tasks->num_rows > 0) {
 
-			while($row_tasks = $result_tasks->fetch_assoc()) {
-				$json[$row_tasks['project_id']]['tasks'][] = array(
-					'id' => $row_tasks['id'],
-					'name' => $row_tasks['name'],
-					'status' => $row_tasks['status'],
-					'priority' => $row_tasks['priority'],
-					'deadline' => $row_tasks['deadline']
-				);
-			}
+		//* get tasks
+		$pdo_tasks_query = $pdo->query('SELECT * FROM tasks ORDER BY `priority` DESC');
+		while ($row_tasks = $pdo_tasks_query->fetch()) {
+			$json[$row_tasks['project_id']]['tasks'][] = array(
+				'id' => $row_tasks['id'],
+				'name' => $row_tasks['name'],
+				'status' => $row_tasks['status'],
+				'priority' => $row_tasks['priority'],
+				'deadline' => $row_tasks['deadline']
+			);
 		}
+
 		print(json_encode($json));
 		exit;
 	}
@@ -45,15 +46,35 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 	//--------------
 	//* add new project
 	if($_GET['action'] == "create" && $_GET['entity'] == "project") {
-		$name = htmlspecialchars($_GET['name']);
-		if($name != "") {
-			$mysqli = connect();
-			$sql_newproject = "INSERT INTO projects SET name='".$mysqli->real_escape_string($name)."'";
-			$result_newproject = $mysqli->query($sql_newproject);
-			if($result_newproject) {
-				$json[$mysqli->insert_id] = array(
-					'id' => $mysqli->insert_id,
-					'name' => $name,
+		$insert_data = array(
+			'name' => htmlspecialchars($_GET['name']),
+			'owner_id' => 2 //TEMPORARY HARDCODED
+		);
+		if($insert_data['name'] != "") {
+			$pdo = connect();
+			$pdo_newproject_query = $pdo->prepare('
+				INSERT INTO projects 
+				SET name = :name,
+					owner_id = :owner_id');
+			$pdo_newproject_query->execute($insert_data);
+
+			if($pdo_newproject_query) {
+				//* get new project info
+				$pid = $pdo->lastInsertId();
+				$pdo_created_project_query = $pdo->prepare('
+					SELECT projects.id, 
+						projects.name AS pname,
+						users.name AS uname
+					FROM `projects`, `users`
+					WHERE users.id = projects.owner_id AND
+						projects.id = :pid
+				');
+				$pdo_created_project_query->execute(array('pid' => $pid));
+				$row_created_project = $pdo_created_project_query->fetch();
+				$json[$pid] = array(
+					'id' => $pid,
+					'name' => $row_created_project['pname'],
+					'owner' => $row_created_project['uname'],
 					'tasks' => array()
 				);
 			} else {
@@ -65,7 +86,7 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		print(json_encode($json));
 		exit;
 	}
-
+	/*
 	//--------------
 	//* edit project
 	if($_GET['action'] == "edit" && $_GET['entity'] == "project") {
@@ -241,18 +262,27 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		print(json_encode($json));
 		exit;
 	}
+	*/
 }
 
 //* DB connection
 function connect() {
-	global $DB_HOST, $DB_NAME, $DB_USER, $DB_PASSWORD;
-	$mysqli = new mysqli($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME);
-	if ($mysqli->connect_errno) {
-		$json['error'] = array('errno' => $mysqli->connect_errno, 'error' => $mysqli->connect_error);
+	global $DB_HOST, $DB_NAME, $DB_USER, $DB_PASSWORD, $DB_CHARSET;
+
+    $dsn = "mysql:host=$DB_HOST;dbname=$DB_NAME;charset=$DB_CHARSET";
+    $opt = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ];
+    
+    try {
+	    $pdo = new PDO($dsn, $DB_USER, $DB_PASSWORD, $opt);
+	    return $pdo;
+	} catch (PDOException $e) {
+		$json['error'] = array('errno' => '0', 'error' => $e->getMessage());
 		print(json_encode($json));
 		exit;
-	} else {
-		return $mysqli;
 	}
 }
 ?>
