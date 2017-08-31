@@ -148,7 +148,7 @@ $(document).ready(function() {
 	$('body').on('click', '.remove-project-init', function() {
 		var project = $(this).closest('.project');
 		var projectId = project.attr('data-id');
-		var projectName = $.trim(project.find('.project-name').text());
+		var projectName = $.trim(project.find('.project-name-value').text());
 		$('#remove-project .project-name').text(projectName);
 		$('#rmProjectId').val(projectId);
 	});
@@ -181,7 +181,7 @@ $(document).ready(function() {
 		var project = $(this).closest('.project');
 		var projectId = project.attr('data-id');
 		$('#editProjectId').val(projectId);
-		var projectName = $.trim(project.find('.project-name').text());
+		var projectName = $.trim(project.find('.project-name-value').text());
 		$('#editProjectName').val(projectName);
 	});
 
@@ -208,7 +208,7 @@ $(document).ready(function() {
 					if(respond.error) {
 						tasman.showAlert(respond.error);
 					} else {
-						$('.project[data-id=' + respond.project_id + ']').find('.project-name').text(respond.name);
+						$('.project[data-id=' + respond.project_id + ']').find('.project-name-value').text(respond.name);
 						$('#edit-project').modal('hide');
 						tasman.hideAlert();
 					}

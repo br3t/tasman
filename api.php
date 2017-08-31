@@ -86,20 +86,24 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		print(json_encode($json));
 		exit;
 	}
-	/*
 	//--------------
 	//* edit project
 	if($_GET['action'] == "edit" && $_GET['entity'] == "project") {
-		$name = trim(htmlspecialchars($_GET['name']));
-		$project_id = intval($_GET['project_id']);
-		if($name != "") {
-			if($project_id != 0) {
-				$mysqli = connect();
-				$sql_editproject = "UPDATE projects SET name='".$mysqli->real_escape_string($name)."' WHERE id=".$project_id;
-				$result_editproject = $mysqli->query($sql_editproject);
-				if($result_editproject) {
-					$json['project_id'] = $project_id;
-					$json['name'] = $name;
+		$update_data = array(
+			'name' => trim(htmlspecialchars($_GET['name'])),
+			'project_id' => intval($_GET['project_id'])
+		);
+		if($update_data['name'] != "") {
+			if($update_data['project_id'] != 0) {
+				$pdo = connect();
+				$pdo_edit_project_query = $pdo->prepare('
+					UPDATE `projects`
+					SET name = :name
+					WHERE id = :project_id
+				');
+				$pdo_edit_project_query->execute($update_data);
+				if($pdo_edit_project_query) {
+					$json = $update_data;
 				} else {
 					$json['error'] = "Project wasn`t edited";
 				}
@@ -112,17 +116,19 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		print(json_encode($json));
 		exit;
 	}
-
 	//--------------
 	//* remove project
 	if($_GET['action'] == "remove" && $_GET['entity'] == "project") {
 		$project_id = intval($_GET['project_id']);
 		if($project_id != "") {
-			$mysqli = connect();
-			$sql_rmproject = "DELETE FROM projects WHERE id=".$project_id.";";
-			$sql_rmproject .= "DELETE FROM tasks WHERE project_id=".$project_id.";";
-			$result_rmproject = $mysqli->multi_query($sql_rmproject);
-			if($result_rmproject) {
+			$pdo = connect();
+			$pdo_rmproject_query = $pdo->prepare('
+				DELETE FROM projects 
+				WHERE id = :project_id');
+			$pdo_rmproject_query->execute(array('project_id' => $project_id));
+
+			if($pdo_rmproject_query) {
+				//TODO: remove all tasks from this project
 				$json['project_id'] = $project_id;
 			} else {
 				$json['error'] = "Project wasn`t removed";
@@ -137,27 +143,40 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 	//--------------
 	//* add new task
 	if($_GET['action'] == "create" && $_GET['entity'] == "task") {
-		$name = htmlspecialchars($_GET['name']);
-		$project_id = intval($_GET['project_id']);
-		$deadline = $_GET['deadline'];
-		if(preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $deadline) != 1) {
-			$deadline = '0000-00-00';
+		$insert_data = array(
+			'name' => htmlspecialchars($_GET['name']),
+			'project_id' => intval($_GET['project_id']),
+			'deadline' => $_GET['deadline']
+		);
+
+		if(preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $insert_data['deadline']) != 1) {
+			$insert_data['deadline'] = '0000-00-00';
 		}
 
-		if($name != "") {
-			$mysqli = connect();
-			$sql_newtask = "INSERT INTO tasks SET name='".$mysqli->real_escape_string($name)."', deadline='".$deadline."', project_id=".$project_id;
-			$result_newptask = $mysqli->query($sql_newtask);
-			if($result_newptask) {
-				$json = array(
-					'id' => $mysqli->insert_id,
-					'name' => $name,
-					'status' => 0,
-					'deadline' => $deadline,
-					'project_id' => $project_id
-				);
+		if($insert_data['name'] != "") {
+			$pdo = connect();
+			$pdo_newtask_query = $pdo->prepare('
+				INSERT INTO `tasks` 
+				SET name = :name,
+					deadline = :deadline,
+					project_id = :project_id
+			');
+			$pdo_newtask_query->execute($insert_data);
+			$json['error'] = 'Created';
+			if($pdo_newtask_query) {
+				//* get new task info
+				$tid = $pdo->lastInsertId();
+				
+				$pdo_created_task_query = $pdo->prepare('
+					SELECT *
+					FROM `tasks`
+					WHERE id = :tid
+				');
+				$pdo_created_task_query->execute(array('tid' => $tid));
+				$row_created_task = $pdo_created_task_query->fetch();
+				$json = $row_created_task;
 			} else {
-				$json['error'] = "Task wasn`t created: ".$mysqli->error;
+				$json['error'] = 'Task wasn`t created';
 			}
 		} else {
 			$json['error'] = 'Please, give name for your new tak';
@@ -165,29 +184,32 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		print(json_encode($json));
 		exit;
 	}
-
 	//--------------
 	//* edit task
 	if($_GET['action'] == "edit" && $_GET['entity'] == "task") {
-		$name = htmlspecialchars($_GET['name']);
-		$id = intval($_GET['id']);
-		$deadline = $_GET['deadline'];
-		if(preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $deadline) != 1) {
+		$update_data = array(
+			'name' => htmlspecialchars($_GET['name']),
+			'id' => intval($_GET['id']),
+			'deadline' => $_GET['deadline']
+		);
+		
+		if(preg_match('/^\d{4}\-\d{2}\-\d{2}$/', $update_data['deadline']) != 1) {
 			$deadline = '0000-00-00';
 		}
-
-		if($name != "") {
-			$mysqli = connect();
-			$sql_edittask = "UPDATE tasks SET name='".$mysqli->real_escape_string($name)."', deadline='".$deadline."' WHERE id=".$id;
-			$result_edittask = $mysqli->query($sql_edittask);
-			if($result_edittask) {
-				$json = array(
-					'id' => $id,
-					'name' => $name,
-					'deadline' => $deadline
-				);
+		
+		if($update_data['name'] != "") {
+			$pdo = connect();
+			$pdo_edittask_query = $pdo->prepare('
+				UPDATE `tasks`
+				SET name = :name,
+					deadline = :deadline
+				WHERE id = :id
+			');
+			$pdo_edittask_query->execute($update_data);
+			if($pdo_edittask_query) {
+				$json = $update_data;
 			} else {
-				$json['error'] = "Task wasn`t edited: ".$mysqli->error;
+				$json['error'] = 'Task wasn`t edited';
 			}
 		} else {
 			$json['error'] = 'Please, give new name for your tak';
@@ -200,10 +222,13 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 	if($_GET['action'] == "remove" && $_GET['entity'] == "task") {
 		$id = intval($_GET['id']);
 		if($id != "") {
-			$mysqli = connect();
-			$sql_rmtask = "DELETE FROM tasks WHERE id='".$id."'";
-			$result_rmtask = $mysqli->query($sql_rmtask);
-			if($result_rmtask) {
+			$pdo = connect();
+			$pdo_rmtask_query = $pdo->prepare('
+				DELETE FROM tasks
+				WHERE id = :id
+			');
+			$pdo_rmtask_query->execute(array('id' => $id));
+			if($pdo_rmtask_query) {
 				$json['id'] = $id;
 			} else {
 				$json['error'] = "Task wasn`t removed";
@@ -217,15 +242,20 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 	//--------------
 	//* change task status
 	if($_GET['action'] == "set_status" && $_GET['entity'] == "task") {
-		$id = intval($_GET['id']);
-		$status = intval($_GET['status']) == 0 ? 0 : 1;
-		if($id != "") {
-			$mysqli = connect();
-			$sql_statustask = "UPDATE tasks SET status=".$status." WHERE id=".$id;
-			$result_statustask = $mysqli->query($sql_statustask);
-			if($result_statustask) {
-				$json['id'] = $id;
-				$json['status'] = $status;
+		$update_data = array(
+			'id' => intval($_GET['id']),
+			'status' => intval($_GET['status']) == 0 ? 0 : 1
+		);
+		if($update_data['id'] != "") {
+			$pdo = connect();
+			$pdo_statustask_query = $pdo->prepare('
+				UPDATE tasks 
+				SET status = :status 
+				WHERE id = :id
+			');
+			$pdo_statustask_query->execute($update_data);
+			if($pdo_statustask_query) {
+				$json = $update_data;
 			} else {
 				$json['error'] = "Task status wasn`t changed";
 			}
@@ -236,22 +266,24 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		exit;
 	}
 	//--------------
-	//* change task status
+	//* change task position
 	if($_GET['action'] == "reorder" && $_GET['entity'] == "task") {
 		$taskByPriority = explode(',', $_GET['taskByPriority']);
 		$tasksLength = count($taskByPriority);
 		if($tasksLength > 1) {
-			$mysqli = connect();
-			$sql_prioritytask = "";
+			$pdo = connect();
+			$pdo_prioritytask_query = '';
 			for($i = 0; $i < $tasksLength; $i++) {
 				$taskByPriority[$i] = intval($taskByPriority[$i]);
 				if($taskByPriority[$i] != 0) {
-					$sql_prioritytask .= 'UPDATE tasks SET priority='.($tasksLength-$i).' WHERE id='.$taskByPriority[$i].';';
-				}
-				
+					// ?
+					$pdo_prioritytask_query .= 'UPDATE `tasks` SET priority='.($tasksLength - $i).' WHERE id='.$taskByPriority[$i].';';
+				}	
 			}
-			$result_prioritytask = $mysqli->multi_query($sql_prioritytask);
-			if($result_prioritytask) {
+			
+			$pdo_prioritytask = $pdo->prepare($pdo_prioritytask_query);
+			$pdo_prioritytask->execute();
+			if($pdo_prioritytask) {
 				$json = 'ok';
 			} else {
 				$json['error'] = 'Tasks weren`t reordered';
@@ -262,7 +294,6 @@ if(isset($_GET['action'])&&isset($_GET['entity'])) {
 		print(json_encode($json));
 		exit;
 	}
-	*/
 }
 
 //* DB connection
@@ -273,7 +304,7 @@ function connect() {
     $opt = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
+        PDO::ATTR_EMULATE_PREPARES   => 1,
     ];
     
     try {
