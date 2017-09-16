@@ -7,7 +7,7 @@ function connect() {
     $opt = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => 1,
+        PDO::ATTR_EMULATE_PREPARES   => 1
     ];
     
     try {

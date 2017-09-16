@@ -299,7 +299,7 @@ $(document).ready(function() {
 					} else {
 						var task = $('.task[data-id=' + respond.id + ']');
 						task.find('.task-name').text(respond.name);
-						if(respond.deadline == '0000-00-00') {
+						if(respond.deadline == '0000-00-00' || respond.deadline == '0') {
 							task.find('.deadline').remove();
 						} else {
 							if(task.find('.deadline').length === 0) {

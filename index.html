@@ -230,7 +230,7 @@
 			<div class="col-sm-10">
 				<span class="glyphicon glyphicon-<%= status == 1 ? 'ok':'remove' %> status-icon" data-status="<% status %>" title="Toggle status"></span>
 				<span class="task-name"><%= name %></span>
-				<% if(deadline !='0000-00-00') { %><span class="label label-default deadline" title="Deadline"><%= deadline %></span><% } %>
+				<% if(deadline !='0000-00-00' && deadline !='0') { %><span class="label label-default deadline" title="Deadline"><%= deadline %></span><% } %>
 			</div>
 			<div class="col-sm-2 text-right">
 				<span class="glyphicon glyphicon-pencil edit-task-init" title="Edit task" data-toggle="modal" data-target="#edit-task"></span>
