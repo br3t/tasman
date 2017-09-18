@@ -1,10 +1,13 @@
 var tasman = {
-	apiPath: "api.php"
+	apiPaths: {
+		tasks: "api_tasks.php",
+		projects: "api_projects.php"
+	} 
 };
 
 tasman.getAll = function() {
 	$.ajax({
-		url: tasman.apiPath,
+		url: tasman.apiPaths.projects,
 		method: "GET",
 		dataType: "json",
 		data: {
@@ -55,7 +58,7 @@ tasman.hideAlert = function() {
 
 tasman.reorderTasks = function(taskIds) {
 	$.ajax({
-		url: tasman.apiPath,
+		url: tasman.apiPaths.tasks,
 		method: "GET",
 		dataType: "json",
 		data: {
@@ -126,7 +129,7 @@ $(document).ready(function() {
 			newProjectNameInput.focus();
 		} else {
 			$.ajax({
-				url: tasman.apiPath,
+				url: tasman.apiPaths.projects,
 				method: "GET",
 				dataType: "json",
 				data: {
@@ -160,7 +163,7 @@ $(document).ready(function() {
 	//* rm project
 	$('body').on('click', '.remove-project', function() {
 		$.ajax({
-			url: tasman.apiPath,
+			url: tasman.apiPaths.projects,
 			method: "GET",
 			dataType: "json",
 			data: {
@@ -199,7 +202,7 @@ $(document).ready(function() {
 		} else {
 			tasman.hideAlert();
 			$.ajax({
-				url: tasman.apiPath,
+				url: tasman.apiPaths.projects,
 				method: "GET",
 				dataType: "json",
 				data: {
@@ -242,7 +245,7 @@ $(document).ready(function() {
 		} else {
 			tasman.hideAlert();
 			$.ajax({
-				url: tasman.apiPath,
+				url: tasman.apiPaths.tasks,
 				method: "GET",
 				dataType: "json",
 				data: {
@@ -287,7 +290,7 @@ $(document).ready(function() {
 		} else {
 			tasman.hideAlert();
 			$.ajax({
-				url: tasman.apiPath,
+				url: tasman.apiPaths.tasks,
 				method: "GET",
 				dataType: "json",
 				data: {
@@ -332,7 +335,7 @@ $(document).ready(function() {
 	//* rm task
 	$('body').on('click', '.remove-task', function() {
 		$.ajax({
-			url: tasman.apiPath,
+			url: tasman.apiPaths.tasks,
 			method: "GET",
 			dataType: "json",
 			data: {
@@ -357,7 +360,7 @@ $(document).ready(function() {
 		var taskId = $(this).closest('.task').attr('data-id');
 		var taskStatus = parseInt($(this).attr('data-status'));
 		$.ajax({
-			url: tasman.apiPath,
+			url: tasman.apiPaths.tasks,
 			method: "GET",
 			dataType: "json",
 			data: {
