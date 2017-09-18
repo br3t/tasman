@@ -13,17 +13,6 @@ tasman.getAll = function() {
 		},
 		success: function(respond) {
 			tasman.renderProjects(respond);
-			$('.task-group').sortable({
-				handle: '.change-task-priority',
-				placeholder: 'row list-group-item task-placeholder',
-				update: function( event, ui ) {
-					var taskIds = [];
-					ui.item.closest('.task-group').find('.task').each(function() { 
-						taskIds.push($(this).attr('data-id'));
-					});
-					tasman.reorderTasks(taskIds);
-				}
-			});
 		}
 	});
 };
@@ -34,6 +23,21 @@ tasman.renderProjects = function(projectList) {
 		var projectHtml = compiledTpl(projectList[i]);
 		$("#projects-wrapper").append(projectHtml);
 	}
+	tasman.makeTasksSortable();
+};
+
+tasman.makeTasksSortable = function() {
+	$('.task-group').sortable({
+		handle: '.change-task-priority',
+		placeholder: 'row list-group-item task-placeholder',
+		update: function( event, ui ) {
+			var taskIds = [];
+			ui.item.closest('.task-group').find('.task').each(function() { 
+				taskIds.push($(this).attr('data-id'));
+			});
+			tasman.reorderTasks(taskIds);
+		}
+	});
 };
 
 tasman.renderTask = function(task) {
