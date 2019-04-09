@@ -4,4 +4,7 @@
 	$DB_USER = "";
 	$DB_PASSWORD = "";
 	$DB_CHARSET = "utf8";
+
+	define('SALT_1', 'zxcv');
+	define('SALT_2', 'bnas');
 ?>

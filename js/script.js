@@ -96,7 +96,23 @@ $(document).ready(function() {
 	
 
 	//* load real projects
-	tasman.getAll();
+	$.ajax({
+		url: tasman.apiPaths.login,
+		method: 'GET',
+		data: {
+			login_check: 1
+		},
+		success: function(response) {
+			if(response.error) {
+				helpInfo.text(response.error);
+			} else {
+				if(response.user.is_logged) {
+					$('#user-panel .username').text(response.user.name);
+					tasman.getAll();
+				}
+			}
+		}
+	});
 
 	$('[data-wrapper=newTaskDeadline], [data-wrapper=taskNewDeadline]').datetimepicker({
 		format: "YYYY-MM-DD"

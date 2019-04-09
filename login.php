@@ -10,17 +10,18 @@ function login($login, $password) {
 		WHERE users.name = :name
 	');
 	$pdo_query->execute(array('name' => $login));
-	$row_check_login = $pdo_query->fetch();
-	//$json['error'] = 'Debug';
+	$row_login = $pdo_query->fetch();
 	
-	if($row_check_login != false) {
-		$hashed_pass = hash_password($password);
-		if($hashed_pass == $row_check_login['password']) {
+	if($row_login != false) {
+		$hashed_pass = hash_password_1($password);
+		if($hashed_pass == $row_login['password']) {
 			$json['user'] = array(
 				'is_logged' => true,
-				'name' => $row_check_login['name'],
-				'role' => $row_check_login['role']
+				'name' => $row_login['name'],
+				'role' => $row_login['role']
 			);
+			setcookie('tasman_login', $row_login['name']);
+			setcookie('tasman_pass', hash_password_2($row_login['password']));
 		} else {
 			$json['error'] = "Wrong login/password combination";
 		}
@@ -32,32 +33,39 @@ function login($login, $password) {
 }
 
 function check_login() {
+	global $json;
 	$user = array('is_logged' => false);
-	if(isset($_COOKIE["login"]) && isset($_COOKIE["pass"])) {
+	if(isset($_COOKIE["tasman_login"]) && isset($_COOKIE["tasman_pass"])) {
+
 		$pdo = connect();
-		$pdo_check_login_query = $pdo->prepare('
-			SELECT *, 
+		$pdo_query = $pdo->prepare('
+			SELECT *
 			FROM `users`
-			WHERE users.name = :name AND
-				users.password = :password
+			WHERE users.name = :name
 		');
-		$pdo_check_login_query->execute(array(
-			'name' => $_COOKIE["login"],
-			'password' => $_COOKIE["pass"]
+		$pdo_query->execute(array(
+			'name' => $_COOKIE["tasman_login"]
 		));
-		$row_check_login = $pdo_created_project_query->fetch();
+		$row_check_login = $pdo_query->fetch();
 		if($row_check_login != false) {
-			$user = array(
-				'is_logged' => true,
-				'name' => $row_check_login['name'],
-				'role' => $row_check_login['role']
-			);
+			$hashed_pass = hash_password_2($row_check_login['password']);
+			if($hashed_pass == $_COOKIE["tasman_pass"]) {
+				$user = array(
+					'is_logged' => true,
+					'name' => $row_check_login['name'],
+					'role' => $row_check_login['role']
+				);
+			}
 		}
 	}
-	return $user;
+	$json['user'] = $user;
 }
 
-function hash_password($password) {
+function hash_password_1($password) {
+	return $password;
+}
+
+function hash_password_2($password) {
 	return $password;
 }
 
