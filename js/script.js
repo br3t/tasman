@@ -1,7 +1,8 @@
 var tasman = {
 	apiPaths: {
 		tasks: "api_tasks.php",
-		projects: "api_projects.php"
+		projects: "api_projects.php",
+		login: "api_login.php"
 	} 
 };
 
@@ -69,6 +70,10 @@ tasman.reorderTasks = function(taskIds) {
 		success: function(respond) {
 		}
 	});
+};
+
+tasman.login = function() {
+
 };
 
 
@@ -382,6 +387,30 @@ $(document).ready(function() {
 						taskRow.find('.status-icon').addClass('glyphicon-remove').removeClass('glyphicon-ok').attr('data-status', 0);
 					}
 					tasman.hideAlert();
+				}
+			}
+		});
+	});
+
+	$('body').on('click', '.log-in', function() {
+		var data = {
+			username: $('#userName').val(),
+			password: $('#password').val()
+		};
+		$.ajax({
+			url: tasman.apiPaths.login,
+			method: "GET",
+			dataType: "json",
+			data: data,
+			success: function(respond) {
+				$('#user-login').modal('hide');
+				if(respond.error) {
+					tasman.showAlert(respond.error);
+				} else {
+					tasman.showAlert('Welcome, ' + respond.user.name + '. Page reloading...');
+					setTimeout(function() {
+						location.reload();
+					}, 3000);
 				}
 			}
 		});
