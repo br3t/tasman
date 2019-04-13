@@ -15,4 +15,4 @@ Simple TASk MANager
 * It should have user authentication solution and a user should only have access to their own projects and tasks
 * It should have automated tests for the all functionality
 
-Demo: [Tasman](http://br3t.org.ua/works/tasman)
+Demo: [Tasman](https://br3t.org.ua/works/tasman)
