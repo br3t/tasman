@@ -2,11 +2,17 @@
 function get_all_tasks() {
 	global $json;
 	$pdo = connect();
+	if(!is_array($json['projects'])) {
+		$json['projects'] = array();
+	}
+	$json['debug'] = 'start';
 	//* get tasks
 	$pdo_tasks_query = $pdo->query('SELECT * FROM tasks ORDER BY `priority` DESC');
 	while ($row_tasks = $pdo_tasks_query->fetch()) {
-		if(array_key_exists($row_tasks['project_id'], $json)) {
-			$json[$row_tasks['project_id']]['tasks'][] = array(
+		
+			$json['debug'] = $row_tasks['project_id'];
+		if(array_key_exists($row_tasks['project_id'], $json['projects'])) {
+			$json['projects'][$row_tasks['project_id']]['tasks'][] = array(
 				'id' => $row_tasks['id'],
 				'name' => $row_tasks['name'],
 				'status' => $row_tasks['status'],

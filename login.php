@@ -32,6 +32,11 @@ function login($login, $password) {
 	/**/
 }
 
+function logout() {
+	setcookie( 'tasman_login' , '' , time() - 3600);
+	setcookie( 'tasman_pass' , '' , time() - 3600);
+}
+
 function check_login() {
 	global $json;
 	$user = array('is_logged' => false);
@@ -53,6 +58,7 @@ function check_login() {
 				$user = array(
 					'is_logged' => true,
 					'name' => $row_check_login['name'],
+					'uid' => $row_check_login['id'],
 					'role' => $row_check_login['role']
 				);
 			}

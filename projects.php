@@ -1,22 +1,30 @@
 <?php
-function get_all_projects() {
+function get_all_projects($filtered) {
 	global $json;
 	$pdo = connect();
+	$projects = array();
 	//* get project
-	$pdo_projects_query = $pdo->query('
+	$query_raw = '
 		SELECT projects.id, 
 			projects.name AS pname,
 			users.name AS uname
 		FROM `projects`, `users`
-		WHERE users.id = projects.owner_id');
+		WHERE users.id = projects.owner_id';
+	if($filtered != 'all') {
+		$query_raw .= ' AND projects.owner_id='.$filtered;
+	}
+
+	$pdo_projects_query = $pdo->query($query_raw);
+
 	while ($row_projects = $pdo_projects_query->fetch()) {
-		$json[$row_projects['id']] = array(
+		$projects[$row_projects['id']] = array(
 			'id' => $row_projects['id'],
 			'name' => $row_projects['pname'],
 			'owner' => $row_projects['uname'],
 			'tasks' => array()
 		);
 	}
+	$json['projects'] = $projects;
 }
 
 function create_project($insert_data) {
@@ -43,7 +51,8 @@ function create_project($insert_data) {
 			');
 			$pdo_created_project_query->execute(array('pid' => $pid));
 			$row_created_project = $pdo_created_project_query->fetch();
-			$json[$pid] = array(
+			$json['projects'] = array();
+			$json['projects'][$pid] = array(
 				'id' => $pid,
 				'name' => $row_created_project['pname'],
 				'owner' => $row_created_project['uname'],

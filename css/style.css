@@ -1,9 +1,13 @@
 body {
-	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQoU2OMq7zlw0AEYAQpXNSutoWQ2lGFeEOI6OABAGfyJgjVLYhIAAAAAElFTkSuQmCC");
+	/*background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQoU2OMq7zlw0AEYAQpXNSutoWQ2lGFeEOI6OABAGfyJgjVLYhIAAAAAElFTkSuQmCC"); */
+	background: #f0f8ff;
 }
 h1 {
 	color: #283593;
 	text-align: center;
+}
+.page-header {
+	border: none;
 }
 .panel .panel-heading,
 .modal .modal-header {
@@ -69,4 +73,25 @@ button.close {
 	z-index: 1050;
 	max-width: 300px;
 	width: 90%;
+}
+.user-logged {
+	display: none;
+}
+.level-1::after,
+.level-2::after {
+	line-height: 10px;
+	font-size: 9px;
+	background: #283593;
+	color: #fff;
+	padding: 2px;
+	margin: 0px 0 0 3px;
+	top: -7px;
+	display: inline-block;
+	position: relative; 
+}
+.level-1::after {
+	content: 'admin';
+}
+.level-2::after {
+	content: 'user';
 }

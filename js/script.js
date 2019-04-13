@@ -15,8 +15,8 @@ tasman.getAll = function() {
 			action: "get",
 			entity: "project"
 		},
-		success: function(respond) {
-			tasman.renderProjects(respond);
+		success: function(response) {
+			tasman.renderProjects(response.projects);
 		}
 	});
 };
@@ -104,10 +104,12 @@ $(document).ready(function() {
 		},
 		success: function(response) {
 			if(response.error) {
-				helpInfo.text(response.error);
+				tasman.showAlert(response.error);
 			} else {
 				if(response.user.is_logged) {
-					$('#user-panel .username').text(response.user.name);
+					$('#user-panel .username').text(response.user.name).addClass('level-' + response.user.role);
+					$('.user-anonymous').hide();
+					$('.user-logged').show();
 					tasman.getAll();
 				}
 			}
@@ -160,9 +162,9 @@ $(document).ready(function() {
 				},
 				success: function(respond) {
 					if(respond.error) {
-						helpInfo.text(respond.error);
+						tasman.showAlert(respond.error);
 					} else {
-						tasman.renderProjects(respond);
+						tasman.renderProjects(respond.projects);
 						$('#add-project').modal('hide');
 						newProjectNameInput.val('');
 						tasman.hideAlert();
@@ -259,7 +261,6 @@ $(document).ready(function() {
 	$('body').on('click', '.create-task', function() {
 		var newTaskNameInput = $("#newTaskName");
 		var newTaskName = newTaskNameInput.val();
-		var helpInfo = newTaskNameInput.closest(".modal-body").find(".help-info");
 		if(newTaskName.length <3) {
 			tasman.showAlert("Task name should be at least 3 symbols length");
 			newTaskNameInput.focus();
@@ -424,6 +425,27 @@ $(document).ready(function() {
 					tasman.showAlert(respond.error);
 				} else {
 					tasman.showAlert('Welcome, ' + respond.user.name + '. Page reloading...');
+					setTimeout(function() {
+						location.reload();
+					}, 3000);
+				}
+			}
+		});
+	});
+
+	$('body').on('click', '.log-out', function() {
+		$.ajax({
+			url: tasman.apiPaths.login,
+			method: "GET",
+			dataType: "json",
+			data: {
+				logout: true
+			},
+			success: function(respond) {
+				if(respond.error) {
+					tasman.showAlert(respond.error);
+				} else {
+					tasman.showAlert('Successfully logged out. Page reloading...');
 					setTimeout(function() {
 						location.reload();
 					}, 3000);
