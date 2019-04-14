@@ -46,5 +46,5 @@ WHERE projects.name = "Garage" AND projects.id = t.project_id
  WHERE tasks.project_id=projects.id AND status=1
  GROUP BY project_id 
  ORDER BY projects.name ASC) 
-WHERE c > 1
+WHERE c > 10
 ORDER BY id
