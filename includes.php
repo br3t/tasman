@@ -1,13 +1,13 @@
 <?php
 header("Content-type: text/json");
 
-$json = array();
+$ajax_respond = array();
 
-include("config.php");
-@include("reconfig.php");
+require_once("config.php");
+@require_once("reconfig.php");
 
-include("connect.php");
-include("login.php");
-include("projects.php");
-include("tasks.php");
+require_once("connection.class.php");
+require_once("login.php");
+require_once("projects.php");
+require_once("tasks.php");
 ?>

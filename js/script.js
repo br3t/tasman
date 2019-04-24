@@ -15,8 +15,8 @@ tasman.getAll = function() {
 			action: "get",
 			entity: "project"
 		},
-		success: function(respond) {
-			tasman.renderProjects(respond);
+		success: function(response) {
+			tasman.renderProjects(response.projects);
 		}
 	});
 };
@@ -49,8 +49,12 @@ tasman.renderTask = function(task) {
 	return compiledTpl(task);
 };
 
-tasman.showAlert = function(text) {
-	tasman.alert.show(300).text(text);
+tasman.showAlert = function(text, tpe) {
+	tasman.alert.removeClass('alert-danger alert-success');
+	if(tpe == undefined) {
+		tpe = 'danger';
+	}
+	tasman.alert.addClass('alert-' + tpe).show(300).text(text);
 };
 
 tasman.hideAlert = function() {
@@ -72,14 +76,11 @@ tasman.reorderTasks = function(taskIds) {
 	});
 };
 
-tasman.login = function() {
-
-};
 
 
 $(document).ready(function() {
 
-	tasman.alert = $('.tasman-alert');
+	tasman.alert = $('#tasman-alert');
 	//* static project for demo
 	if(location.hash == '#demo') {
 		tasman.renderProjects({
@@ -104,10 +105,12 @@ $(document).ready(function() {
 		},
 		success: function(response) {
 			if(response.error) {
-				helpInfo.text(response.error);
+				tasman.showAlert(response.error);
 			} else {
 				if(response.user.is_logged) {
-					$('#user-panel .username').text(response.user.name);
+					$('#user-panel .username').text(response.user.name).addClass('level-' + response.user.role);
+					$('.user-anonymous').hide();
+					$('.user-logged').show();
 					tasman.getAll();
 				}
 			}
@@ -160,9 +163,9 @@ $(document).ready(function() {
 				},
 				success: function(respond) {
 					if(respond.error) {
-						helpInfo.text(respond.error);
+						tasman.showAlert(respond.error);
 					} else {
-						tasman.renderProjects(respond);
+						tasman.renderProjects(respond.projects);
 						$('#add-project').modal('hide');
 						newProjectNameInput.val('');
 						tasman.hideAlert();
@@ -259,7 +262,6 @@ $(document).ready(function() {
 	$('body').on('click', '.create-task', function() {
 		var newTaskNameInput = $("#newTaskName");
 		var newTaskName = newTaskNameInput.val();
-		var helpInfo = newTaskNameInput.closest(".modal-body").find(".help-info");
 		if(newTaskName.length <3) {
 			tasman.showAlert("Task name should be at least 3 symbols length");
 			newTaskNameInput.focus();
@@ -423,13 +425,68 @@ $(document).ready(function() {
 				if(respond.error) {
 					tasman.showAlert(respond.error);
 				} else {
-					tasman.showAlert('Welcome, ' + respond.user.name + '. Page reloading...');
+					tasman.showAlert('Welcome, ' + respond.user.name + '. Page reloading...', 'success');
 					setTimeout(function() {
 						location.reload();
 					}, 3000);
 				}
 			}
 		});
+	});
+
+	$('body').on('click', '.log-out', function() {
+		$.ajax({
+			url: tasman.apiPaths.login,
+			method: "GET",
+			dataType: "json",
+			data: {
+				logout: true
+			},
+			success: function(respond) {
+				if(respond.error) {
+					tasman.showAlert(respond.error);
+				} else {
+					tasman.showAlert('Successfully logged out. Page reloading...', 'success');
+					setTimeout(function() {
+						location.reload();
+					}, 3000);
+				}
+			}
+		});
+	});
+
+	$('body').on('click', '.register', function(e) {
+		e.stopPropagation();
+		var login = $('#newUserName').val();
+		var password1 = $('#newPassword').val();
+		var password2 = $('#newPassword2').val();
+		if(password1 != password2) {
+			tasman.showAlert('Passwords don`t match');
+		} else if(password1.length < 4) {
+			tasman.showAlert('Password too short. Please, use at least 4 symbols');
+		} else if(login.length < 4) {
+			tasman.showAlert('Login too short. Please, use at least 4 symbols');
+		} else if(/[^a-z\d]/.test(login)) {
+			tasman.showAlert('Please, use only latin letters and digits for login');
+		} else {
+			$.ajax({
+			url: tasman.apiPaths.login,
+			method: "GET",
+			dataType: "json",
+			data: {
+				newUsername: login,
+				newPassword: password1
+			},
+			success: function(respond) {
+				if(respond.error) {
+					tasman.showAlert(respond.error);
+				} else {
+					tasman.showAlert('You`ve been registered. Now you can login', 'success');
+					$('#user-register').modal('hide');
+				}
+			}
+		});
+		}
 	});
 
 });

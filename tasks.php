@@ -1,137 +1,162 @@
 <?php
-function get_all_tasks() {
-	global $json;
-	$pdo = connect();
-	//* get tasks
-	$pdo_tasks_query = $pdo->query('SELECT * FROM tasks ORDER BY `priority` DESC');
-	while ($row_tasks = $pdo_tasks_query->fetch()) {
-		if(array_key_exists($row_tasks['project_id'], $json)) {
-			$json[$row_tasks['project_id']]['tasks'][] = array(
+function get_all_tasks($data_bus) {
+
+	$connection = new Connection($data_bus);
+	if($connection != null) {
+		$projects_to_get_tasks = implode(',', array_keys($data_bus['projects']));
+		//* Get all tasks
+		$connection_query = $connection->query('SELECT * '.
+			'FROM tasks '.
+			'WHERE project_id IN ('.$projects_to_get_tasks.') '.
+			'ORDER BY `priority` DESC');
+		
+		while ($row_tasks = $connection_query->fetch()) {
+			$data_bus['projects'][$row_tasks['project_id']]['tasks'][] = array(
 				'id' => $row_tasks['id'],
 				'name' => $row_tasks['name'],
 				'status' => $row_tasks['status'],
 				'priority' => $row_tasks['priority'],
 				'deadline' => $row_tasks['deadline']
 			);
-		}	
+		}
 	}
+	return $data_bus;
 }
 
-function create_task($insert_data) {
-	global $json;
+function create_task($insert_data, $data_bus) {
+
 	if($insert_data['name'] != "") {
-		$pdo = connect();
-		$pdo_newtask_query = $pdo->prepare('
-			INSERT INTO `tasks` 
-			SET name = :name,
-				deadline = :deadline,
-				project_id = :project_id
-		');
-		$pdo_newtask_query->execute($insert_data);
-		$json['error'] = 'Created';
-		if($pdo_newtask_query) {
-			//* get new task info
-			$tid = $pdo->lastInsertId();
-			
-			$pdo_created_task_query = $pdo->prepare('
-				SELECT *
-				FROM `tasks`
-				WHERE id = :tid
+		$connection = new Connection($data_bus);
+		if($connection != null) {
+			// Create task
+			$connection_query = $connection->prepare('
+				INSERT INTO `tasks` 
+				SET name = :name,
+					deadline = :deadline,
+					project_id = :project_id
 			');
-			$pdo_created_task_query->execute(array('tid' => $tid));
-			$row_created_task = $pdo_created_task_query->fetch();
-			$json = $row_created_task;
-		} else {
-			$json['error'] = 'Task wasn`t created';
+			$connection_query->execute($insert_data);
+			$data_bus['error'] = 'Created';
+			if($connection_query) {
+				//* Get created task info
+				$tid = $connection->lastInsertId();
+				
+				$connection_query_created = $connection->prepare('
+					SELECT *
+					FROM `tasks`
+					WHERE id = :tid
+				');
+				$connection_query_created->execute(array('tid' => $tid));
+				$row_created_task = $connection_query_created->fetch();
+				$data_bus = $row_created_task;
+			} else {
+				$data_bus['error'] = 'Task wasn`t created';
+			}
 		}
 	} else {
-		$json['error'] = 'Please, give name for your new task';
+		$data_bus['error'] = 'Please, give name for your new task';
 	}
+	return $data_bus;
 }
 
-function update_task($update_data) {
-	global $json;
+function update_task($update_data, $data_bus) {
+
 	if($update_data['name'] != "") {
-		$pdo = connect();
-		$pdo_edittask_query = $pdo->prepare('
-			UPDATE `tasks`
-			SET name = :name,
-				deadline = :deadline
-			WHERE id = :id
-		');
-		$pdo_edittask_query->execute($update_data);
-		if($pdo_edittask_query) {
-			$json = $update_data;
-		} else {
-			$json['error'] = 'Task wasn`t edited';
+		$connection = new Connection($data_bus);
+		if($connection != null) {
+			// Update task
+			$connection_query = $connection->prepare('
+				UPDATE `tasks`
+				SET name = :name,
+					deadline = :deadline
+				WHERE id = :id
+			');
+			$connection_query->execute($update_data);
+			if($connection_query) {
+				$data_bus = $update_data;
+			} else {
+				$data_bus['error'] = 'Task wasn`t edited';
+			}
 		}
 	} else {
-		$json['error'] = 'Please, give new name for your task';
+		$data_bus['error'] = 'Please, give new name for your task';
 	}
+	return $data_bus;
 }
 
-function remove_task($id) {
-	global $json;
+function remove_task($id, $data_bus) {
+
 	if($id != "") {
-		$pdo = connect();
-		$pdo_rmtask_query = $pdo->prepare('
-			DELETE FROM tasks
-			WHERE id = :id
-		');
-		$pdo_rmtask_query->execute(array('id' => $id));
-		if($pdo_rmtask_query) {
-			$json['id'] = $id;
-		} else {
-			$json['error'] = "Task wasn`t removed";
+		$connection = new Connection($data_bus);
+		if($connection != null) {
+			$connection_query = $connection->prepare('
+				DELETE FROM tasks
+				WHERE id = :id
+			');
+			$connection_query->execute(array('id' => $id));
+			if($connection_query) {
+				$data_bus['id'] = $id;
+			} else {
+				$data_bus['error'] = "Task wasn`t removed";
+			}
 		}
 	} else {
-		$json['error'] = 'Please, set id of removing task';
+		$data_bus['error'] = 'Please, set id of removing task';
 	}
+	return $data_bus;
 }
 
-function update_task_status($update_data) {
-	global $json;
+function update_task_status($update_data, $data_bus) {
+
 	if($update_data['id'] != "") {
-		$pdo = connect();
-		$pdo_statustask_query = $pdo->prepare('
-			UPDATE tasks 
-			SET status = :status 
-			WHERE id = :id
-		');
-		$pdo_statustask_query->execute($update_data);
-		if($pdo_statustask_query) {
-			$json = $update_data;
-		} else {
-			$json['error'] = "Task status wasn`t changed";
+		
+		$connection = new Connection($data_bus);
+		if($connection != null) {
+			$connection_query = $connection->prepare('
+				UPDATE tasks 
+				SET status = :status 
+				WHERE id = :id
+			');
+			$connection_query->execute($update_data);
+			if($connection_query) {
+				$data_bus = $update_data;
+			} else {
+				$data_bus['error'] = "Task status wasn`t changed";
+			}
 		}
 	} else {
-		$json['error'] = 'Please, set task id for changing status';
+		$data_bus['error'] = 'Please, set task id for changing status';
 	}
+	return $data_bus;
 }
 
-function update_task_order($task_by_priority) {
-	global $json;
+function update_task_order($task_by_priority, $data_bus) {
+
 	$tasks_length = count($task_by_priority);
 	if($tasks_length > 1) {
-		$pdo = connect();
-		$pdo_prioritytask_query = '';
-		for($i = 0; $i < $tasks_length; $i++) {
-			$task_by_priority[$i] = intval($task_by_priority[$i]);
-			if($task_by_priority[$i] != 0) {
-				// ?
-				$pdo_prioritytask_query .= 'UPDATE `tasks` SET priority='.($tasks_length - $i).' WHERE id='.$task_by_priority[$i].';';
-			}	
-		}
 		
-		$pdo_prioritytask = $pdo->prepare($pdo_prioritytask_query);
-		$pdo_prioritytask->execute();
-		if($pdo_prioritytask) {
-			$json = 'ok';
-		} else {
-			$json['error'] = 'Tasks weren`t reordered';
+		$connection = new Connection($data_bus);
+		if($connection != null) {
+			$upate_priority_query = '';
+			for($i = 0; $i < $tasks_length; $i++) {
+				$task_by_priority[$i] = intval($task_by_priority[$i]);
+				if($task_by_priority[$i] != 0) {
+					// ?
+					$upate_priority_query .= 'UPDATE `tasks` SET priority='.($tasks_length - $i).' WHERE id='.$task_by_priority[$i].';';
+				}	
+			}
+			
+			$connection_query = $connection->prepare($upate_priority_query);
+			$connection_query->execute();
+			if($connection_query) {
+				$data_bus = 'ok';
+			} else {
+				$data_bus['error'] = 'Tasks weren`t reordered';
+			}
 		}
 	} else {
-		$json['error'] = 'Please, set tasks for reorder';
+		$data_bus['error'] = 'Please, set tasks for reorder';
 	}
+	return $data_bus;
 }
 ?>
