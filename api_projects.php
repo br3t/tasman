@@ -48,5 +48,6 @@ if(!$ajax_respond['user']['is_logged']) {
 	
 }
 print(json_encode($ajax_respond));
+exit;
 
 ?>

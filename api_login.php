@@ -14,6 +14,7 @@ if(isset($_GET['username'])&&isset($_GET['password'])) {
 	// Register new user
 	$ajax_respond = register($_GET['newUsername'], $_GET['newPassword'], $ajax_respond);
 }
+
 print(json_encode($ajax_respond));
 exit;
 

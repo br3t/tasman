@@ -15,7 +15,6 @@ function get_all_projects($filtered, $data_bus) {
 		if($filtered != 'all') {
 			$query_raw .= ' AND projects.owner_id='.intval($filtered);
 		}
-		$data_bus['q'] = $query_raw;
 		$connection_query = $connection->query($query_raw);
 		while ($row_projects = $connection_query->fetch()) {
 			$projects[$row_projects['id']] = array(

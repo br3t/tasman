@@ -4,7 +4,8 @@ Simple TASk MANager
 ## Functional requirements
 
 * Create/update/delete projects
-* Create/update/delete task in projects
+* Add tasks to projects
+* Update/delete task in projects
 * Prioritize task into a project
 * Choose deadline for task
 * Mark task as "done"
@@ -15,4 +16,5 @@ Simple TASk MANager
 * It should have user authentication solution and a user should only have access to their own projects and tasks
 * It should have automated tests for the all functionality
 
-Demo: [Tasman](http://br3t.org.ua/works/tasman)
+Demo: [Tasman](https://br3t.org.ua/works/tasman)
+
