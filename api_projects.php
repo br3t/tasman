@@ -20,7 +20,7 @@ if(!$user->get_is_logged()) {
 				if($user->get_role() == 1) {
 					$filtered = 'all';
 				}
-				$ajax_respond = get_all_projects($filtered, $ajax_respond);
+				$ajax_respond = Project::get_all($filtered, $ajax_respond);
 				$ajax_respond = get_all_tasks($ajax_respond);
 				break;
 
@@ -31,7 +31,7 @@ if(!$user->get_is_logged()) {
 					'name' => htmlspecialchars($_GET['name']),
 					'owner_id' => $user->get_id()
 				);
-				$ajax_respond = create_project($insert_data, $ajax_respond);
+				$ajax_respond = Project::create($insert_data, $ajax_respond);
 				break;
 
 			case 'edit':
@@ -41,14 +41,14 @@ if(!$user->get_is_logged()) {
 					'name' => trim(htmlspecialchars($_GET['name'])),
 					'project_id' => intval($_GET['project_id'])
 				);
-				$ajax_respond = update_project($update_data, $ajax_respond);
+				$ajax_respond = Project::update($update_data, $ajax_respond);
 				break;
 
 			case 'remove':
 				//--------------
 				//* remove project
 				$project_id = intval($_GET['project_id']);
-				$ajax_respond = remove_project($project_id, $ajax_respond);
+				$ajax_respond = Project::remove($project_id, $ajax_respond);
 				break;
 
 		}

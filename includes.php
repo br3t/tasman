@@ -8,6 +8,6 @@ require_once("config.php");
 
 require_once("connection.class.php");
 require_once("user.class.php");
-require_once("projects.php");
+require_once("project.class.php");
 require_once("tasks.php");
 ?>
