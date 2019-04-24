@@ -21,7 +21,7 @@ if(!$user->get_is_logged()) {
 					$filtered = 'all';
 				}
 				$ajax_respond = Project::get_all($filtered, $ajax_respond);
-				$ajax_respond = get_all_tasks($ajax_respond);
+				$ajax_respond = Task::get_all($ajax_respond);
 				break;
 
 			case 'create':
