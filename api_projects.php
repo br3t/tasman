@@ -1,8 +1,10 @@
 <?php
 require_once('includes.php');
 
-$ajax_respond = check_login($ajax_respond);
-if(!$ajax_respond['user']['is_logged']) {
+$user = new User();
+
+
+if(!$user->get_is_logged()) {
 
 	$ajax_respond['error'] = 'You should be logged in for this action!';
 
@@ -13,11 +15,10 @@ if(!$ajax_respond['user']['is_logged']) {
 		if($_GET['action'] == "get" && $_GET['entity'] == "project") {
 			//--------------
 			//* get projects info
-			$filtered = $ajax_respond['user']['uid'];
-			if($ajax_respond['user']['role'] == 1) {
+			$filtered = $user->get_id();
+			if($user->get_role() == 1) {
 				$filtered = 'all';
 			}
-			$data_bus['f'] = $filtered;
 			$ajax_respond = get_all_projects($filtered, $ajax_respond);
 			$ajax_respond = get_all_tasks($ajax_respond);
 
@@ -26,7 +27,7 @@ if(!$ajax_respond['user']['is_logged']) {
 			//* add new project
 			$insert_data = array(
 				'name' => htmlspecialchars($_GET['name']),
-				'owner_id' => $ajax_respond['user']['uid']
+				'owner_id' => $user->get_id()
 			);
 			$ajax_respond = create_project($insert_data, $ajax_respond);
 

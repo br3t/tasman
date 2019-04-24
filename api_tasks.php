@@ -1,11 +1,11 @@
 <?php
 require_once('includes.php');
 
-$ajax_respond = check_login($ajax_respond);
-if(!$ajax_respond['user']['is_logged']) {
+$user = new User();
 
-	$json['error'] = 'You should be logged in for this action!';
-	exit;
+if(!$user->get_is_logged()) {
+
+	$ajax_respond['error'] = 'You should be logged in for this action!';
 
 } else {
 
